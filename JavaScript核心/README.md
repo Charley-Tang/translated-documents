@@ -1,7 +1,7 @@
 # JavaScript 核心
 
 > 原文：[JavaScript. The Core](http://dmitrysoshnikov.com/ecmascript/javascript-the-core/)  
-> 作者：[Dmitry Soshnikov](http://dmitrysoshnikov.com/)
+> 作者：[Dmitry Soshnikov](http://dmitrysoshnikov.com/)  
 > 第二版：[JavaScript. The Core: 2nd Edition](http://dmitrysoshnikov.com/ecmascript/javascript-the-core-2nd-edition/)
 
 ### 目录
