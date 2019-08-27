@@ -3,30 +3,24 @@
 > 原文：[JavaScript. The Core](http://dmitrysoshnikov.com/ecmascript/javascript-the-core/)  
 > 作者：[Dmitry Soshnikov](http://dmitrysoshnikov.com/)  
 > 第二版：[JavaScript. The Core: 2nd Edition](http://dmitrysoshnikov.com/ecmascript/javascript-the-core-2nd-edition/)
+>
+> 第二版译文：[【译】JavaScript 核心（第二版）](https://segmentfault.com/a/1190000012825172?utm_medium=referral&utm_source=tuicool#articleHeader6)
 
-### 目录
 
-*   1.对象
 
-*   2.原型链
+## 目录
 
-*   3.构造器
-
-*   4.运行栈
-
-*   5.运行上下文
-
-*   6.变量
-
-*   7.激活
-
-*   8.作用域
-
-*   9.闭包
-
-*   10.this
-
-*   11.结论
+*   1.[对象](#Object)
+*   2.[原型链](#PrototypeChain)
+*   3.[构造器](#Constructor)
+*   4.[运行栈](#ExecutionContextStack)
+*   5.[运行上下文](#ExecutionContext)
+*   6.[变量对象](#VariableObject)
+*   7.[激活对象](#ActivationObject)
+*   8.[作用域](#ScopeChain)
+*   9.[闭包](#Closure)
+*   10.[this](#ThisValue)
+*   11.[结论](#Conclusion)
 
 本文是ECMA-262-3规范系列的概述和摘要。每个章节都包含对应匹配章节的引用，以便您可以阅读以获取更深入的理解。
 
@@ -34,7 +28,9 @@
 
 我们从一个对象的概念触发，这是ECMAScript的基础。
 
-## 对象
+
+
+## <a id="Object">对象</a>
 
 ECMAScript是一门高度抽象的、面向对象的语言，它处理对象。还有原始值，但是在需要的情况下也会转换成对象。
 
@@ -62,7 +58,7 @@ var foo = {
 
 
 
-## 原型链
+## <a id="PrototypeChain">原型链</a>
 
 原型对象也只是简单的对象，可能有自己的原型。如果一个原型在它的`prototype`上有一个非空的引用，亦或者有多个，这就称为原型链。
 
@@ -125,7 +121,9 @@ var c = Object.create(a, {y: {value: 30}});
 
 这在让对象拥有相同或相似的状态结构（即相同的属性集）和不同的状态值的情况下通常是需要的。这种情况我们可以用指定模式的构造函数去生产对象。
 
-## 构造器
+
+
+## <a id="Constructor">构造器</a>
 
 除了通过指定模式创建对象，构造函数还做了其他一件有用的事 —— 自动给新创建的对象设置原型对象。这个原型对象存在存储在构造函数的`prototype`属性上。
 
@@ -182,7 +180,6 @@ console.log(
 ![Figure 3. A constructor and objects relationship.](http://dmitrysoshnikov.com/wp-content/uploads/constructor-proto-chain.png)
 
 <p align="center">图 3. 构造函数和对象关系</p>
-
 图片再次展示了每个对象都有一个原型。构造方法Foo有它自己的`__proto__`是`Function.prototype`，其又通过`__proto__`属性再次引用到`Object.prototype`，如此反复，`Foo.prototype`只是Foo的一个显式属性，是对象b和c原型的引用。
 
 形式上，如果要考虑分类的概念（刚才我们已经分类的那个新分离的东西-Foo），构造函数和原型对象的组合可以被称为“类”。事实上，例如Python的第一类动态类具有完全相同的属性/方法解析实现。从这个角度看，Python类知识ECMAScript中使用的基于委托的继承的语法糖。
@@ -221,7 +218,9 @@ OOP.ECMAScript实现是专门用于ECMAScript中的OOP
 
 现在，当我们了解基本对象方面时，让我们看看ECMAScript中运行时程序是如何实现的。也就是所谓的执行上下文堆栈，每个元素都可以抽象地表示为对象。确实，ECMAScript几乎在任何地方都以对象的概念运作。
 
-## 执行环境堆栈
+
+
+## <a id="ExecutionContextStack">执行环境堆栈</a>
 
 ECMAScript中有代码有三种类型：全局代码、函数代码和eval代码。每种代码都在其执行环境中进行评估。只有一个全局环境，但可能有很多函数或eval执行环境。每次调用函数，进入函数执行环境并评估执行函数代码类型。每次调用eval函数，都会进入eval执行环境评估执行其代码。
 
@@ -247,7 +246,6 @@ foo(30);
 ![å¾4.æ§è¡ä¸ä¸æå æ ã](http://dmitrysoshnikov.com/wp-content/uploads/ec-stack.png)
 
 <p align="center">图 4. 执行上下文堆栈。</p>
-
 当程序开始时，它进入全局环境，是栈的底部即第一个元素。然后全局代码提供一些初始化操作，创建需要的对象和函数。在执行全局环境期间，代码可以激活一些其他（已创建的）函数，该函数进入其执行环境，将新元素推到堆栈，以此类推。初始化完成后，运行时系统正在等待一些事件（如用户的鼠标点击），这将激活某些功能并进入新的执行环境。
 
 在下图中，将一些函数环境作为`EC1`，全局环境作为`Global EC`，我们在进入和退出`EC1`时，全局环境有以下堆栈变化。
@@ -255,26 +253,28 @@ foo(30);
 ![å¾5.æ§è¡ä¸ä¸æå æ çæ´æ¹ã](http://dmitrysoshnikov.com/wp-content/uploads/ec-stack-changes.png)
 
 <p align="center">图 5.执行上下文堆栈的变化</p>
-
 这就是ECMAScript的运行时系统如何管理代码的执行。
 
 有关ECMAScript中执行环境的更多信息，请参阅相应的[第一章 执行环境](http://dmitrysoshnikov.com/ecmascript/chapter-1-execution-contexts/)。
 
 正如我们所说，堆栈中的每个执行环境都可以表示为一个对象。让我们看看一个环境执行它的代码需要什么样的结构和状态（其属性）类型。
 
-## 执行环境
+
+
+## <a id="ExecutionContext">执行环境</a>
 
 一个执行环境可以抽象地表示为一个简单对象。每个执行环境都有一组属性（我们称环境状态）以跟踪其关联代码的执行进度。在下图中，展示了环境的结构：
 
 ![å¾6.æ§è¡ä¸ä¸æç»æ](http://dmitrysoshnikov.com/wp-content/uploads/execution-context.png)
 
 <p align="center">图 6.执行环境结构</p>
-
 除了这三个需要的属性（变量对象，作用域链和this值）之外，执行环境可以具有任何其他状态，具体取决于实现。
 
 让我们详细考虑一下环境的这些重要属性。
 
-## 变量对象
+
+
+## <a id="VariableObject">变量对象</a>
 
 > 一个变量对象是关联执行环境数据的容器。它是一个特殊的对象，存储在环境中定义的变量和函数声明。
 
@@ -303,7 +303,6 @@ console.log(baz); // ReferenceError, "baz" is not defined
 ![å¾7.å¨å±åéå¯¹è±¡ã](http://dmitrysoshnikov.com/wp-content/uploads/variable-object.png)
 
 <p align="center">图 7.全局变量对象。</p>
-
 再看一次，`baz`作为函数表达式的函数不包含在变量对象中。这就是我们尝试在函数本身之外访问它却得到`ReferenceError`的原因。
 
 注意。这与其他语言（如C/C++）不同，ECMAScript中，只有函数创建一个新的作用域。定义在一个函数作用域内的变量和内部函数在外部不是直接可见的，也不会污染全局变量对象。
@@ -312,7 +311,9 @@ console.log(baz); // ReferenceError, "baz" is not defined
 
 那么函数及其变量对象呢？？在函数环境中，变量对象被表示为一个激活对象。
 
-## 激活对象
+
+
+## <a id="ActivationObject">激活对象</a>
 
 当一个函数被调用时，会创建一个称为激活对象的特殊对象。它被形参和特殊的`arguments`对象（形参的映射，具有索引属性）填充。然后激活对象被用作函数环境的变量对象。
 
@@ -335,7 +336,6 @@ foo(10, 20);
 ![å¾8.æ¿æ´»å¯¹è±¡ã](http://dmitrysoshnikov.com/wp-content/uploads/activation-object.png)
 
 <p align="center">图 8.激活对象。</p>
-
 并且函数表达式`baz`也不包含在变量（激活）对象中。
 
 有关此主题的所有细微情况（如变量和函数的声明提升）的完整描述可以再同一名称中找到。[第2章 变量对象](http://dmitrysoshnikov.com/ecmascript/chapter-2-variable-object/)。
@@ -344,7 +344,9 @@ foo(10, 20);
 
 我们正在进入下一部分。众所周知，在ECMAScript中我们可以使用内部函数，在这些内部函数中，我们可以引用父函数的变量或全局环境的变量。当我们将变量对象命名为环境中的作用域对象，和上面讨论的原型链类似，这是所谓的作用域链。
 
-## 作用域链
+
+
+## <a id="ScopeChain">作用域链</a>
 
 > 作用域链是一个对象列表，在环境的代码中搜索出现的标识符。
 
@@ -376,7 +378,6 @@ var x = 10;
 ![å¾9.èå´é¾ã](http://dmitrysoshnikov.com/wp-content/uploads/scope-chain.png)
 
 <p align="center">图 9.作用域链</p> 
-
 在代码执行时，可以使用`with`语句和`catch`从句对象来扩充作用域链。由于这些对象是简单的对象，它们可能有原型（和原型链）。这一事实导致作用域链查找的二维的：（1）首先考虑作用域链，（2）然后在每个作用域链的链接上，深入原型链（如果链接有原型的情况）。
 
 对于这个例子：
@@ -418,12 +419,13 @@ console.log(x); // 10
 ![å¾10.âwith-augmentedâèå´é¾ã](http://dmitrysoshnikov.com/wp-content/uploads/scope-chain-with.png)
 
 <p align="center">图 10.扩展作用域链</p>
-
 注意，并非所有实现的全局对象都继承自`Object.prototype`。图中描述的行为（引用来自全局环境的未定义的x变量）是可测试的，如在SpiderMonkey中。
 
 在所有父变量对象存在之前，在函数内部获取父数据没啥特别的 — 我们展示遍历作用域链去解析（查找）需要的变量。但是，和上面我们提到的，在一个环境结束后，它全部的状态和自身都已被摧毁了，同时内部函数从父函数中返回。此外，这个已返回的函数之后可能会被另一个环境激活，如果一些自由变量的环境已经消失，这种激活会是什么？在一般理论中，有助于解决这个问题的是（词法上）闭包的概念，在ECMAScript中这是和作用域链直接关联的。
 
-## 闭包
+
+
+## <a id="Closure">闭包</a>
 
 在ECMAScript中，函数是第一类对象。这个术语意味着函数可以作为参数传递给其他函数（这种情况下，它们被称为`funargs`，是`function arguments`的简称）。接收`funargs`的函数称为高阶函数，或者更贴近数学地说叫运算符。从其他函数返回的函数称为`函数值函数`（或`有函数值的函数`）。
 
@@ -506,7 +508,6 @@ console.log(
 ![图片描述](http://dmitrysoshnikov.com/wp-content/uploads/shared-scope.png)
 
 <p align="center">图 11.共享的[[Scope]]</p>
-
 正是这个特性与在循环中创建多个函数的混淆是相关的。在创建的函数内部使用循环计数器，当所有函数内拥有相同的计数器值，一些程序员经常会得到以外的结果。现在应该清楚为什么会这样 — 因为这些函数拥有相同的`[[Scope]]`，循环计数器拥有最后赋值的值。
 
 ```javascript
@@ -562,7 +563,9 @@ data[2](); // 2
 
 考虑到执行环境的最后一个属性，我们即将进入下一部分，关于`this`值的概念。
 
-## This 值
+
+
+## <a id="ThisValue">This 值</a>
 
 > this值是一个关联执行环境的特殊对象，因此，它可以被命名为环境对象（即在所激活执行环境的环境对象）。
 
@@ -614,7 +617,9 @@ otherFoo(); // 又是全局对象
 
 为了深入考虑`this`在每次函数调用时可能改变（可能更重要），你可以阅读[第三章 This](http://dmitrysoshnikov.com/ecmascript/chapter-3-this/)，这将详细讨论上述案例。
 
-## 结论
+
+
+## <a id="Conclusion">结论</a>
 
 到这一步，我们完成了这个简单的概述。虽然事实并非如此简短，对某些这题的正题解释需要一本完整的书。我们没有触及的两个主题：函数（以及函数类型的差异，例如函数声明和函数表达式）和ECMAScript中使用的评估策略。这两个主题可以在ES3系列的对应章节中找到：[第五章 函数](http://dmitrysoshnikov.com/ecmascript/chapter-5-functions/)和[第八章 评估策略](http://dmitrysoshnikov.com/ecmascript/chapter-8-evaluation-strategy/)。
 
